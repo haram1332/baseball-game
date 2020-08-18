@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+
+  <style>
+    .one {
+      width: 100vw;
+      height: 100vh;
+    }
+    .po {
+      width: 10vw;
+      height: 90vh;
+      background-color: chartreuse;
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+    }
+    .start {
+      width: 300px;
+      height: 50px;
+    }
+
+    .ab {
+      width: 100vw;
+      height: 10vh;
+      background-color: blue;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .we {
+      width: 100vw;
+      height: 100vh;
+      background-image: url("https://t1.daumcdn.net/cfile/blog/162F843C4D1846AC37");
+      object-fit: cover;
+      position: absolute;
+      z-index: -1;
+    }
+    .three {
+      width: 90vw;
+      height: 90vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .two {
+      width: 100vw;
+      height: 90vw;
+      display: flex;
+    }
+    .four {
+      width: 50%;
+      height: 40%;
+      /* background-color: rgb(196, 196, 196);  */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+    .put {
+      width: 250px;
+      height: 50px;
+    }
+    .start {
+      width: 50px;
+      height: 55px;
+    }
+    #start-btn {
+      width: 100px;
+      height: 30px;
+    }
+  </style>
+  <body>
+    <div class="one">
+      <div class="we"></div>
+      <div class="ab">
+        <h1 class="string">야구게임</h1>
+      </div>
+      <div class="two">
+        <div class="po" id="po"></div>
+        <div class="three">
+          <div class="four">
+            <div class="end">
+              <h1 id="h1">시작 버튼을 눌려 게임을 시작해주세요.</h1>
+            </div>
+            <div>
+              <input class="put" id="put" type="text" /><button
+                class="start"
+                id="message"
+              >
+                입력
+              </button>
+            </div>
+            <button id="start-btn">시작</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      const MESSAGE = {
+        beforeMessage: "시작 버튼을 눌려 게임을 시작해주세요.",
+        afterMessage: "숫자를 입력하세요.",
+      };
+      let GAME_STATE = "initial";
+      const h1 = document.getElementById("h1");
+      const startBtn = document.getElementById("start-btn");
+      const message = document.getElementById("message");
+      const put = document.getElementById("put");
+      const h3 = document.getElementById("h3");
+      const po = document.getElementById("po");
+      const state = () => {
+        GAME_STATE = "started";
+        h1.innerHTML = MESSAGE.afterMessage;
+        startBtn.style.visibility = "hidden";
+        return;
+      };
+      let stcount = 0;
+      let bcount = 0;
+      let ocount = 3;
+
+      let putValue;
+
+      let num = [];
+      let input = [];
+
+      /* 조건 1 && 조건 2  */
+
+      //initial,started
+      const randum = () => {
+        if (num.length > 0) {
+          return;
+        }
+        for (i = 0; i < 3; i++) {
+          let random = Math.floor(Math.random() * 10);
+          while (num.includes(random)) {
+            random = Math.floor(Math.random() * 10);
+          }
+          num.push(random);
+        }
+      };
+
+      let match = (transfrom) => {
+        for (let i = 0; i < num.length; i++) {
+          if (num[i] === transfrom[i]) {
+            stcount++;
+            ocount--;
+          }
+
+          for (let j = 0; j < transfrom.length; j++) {
+            if (i !== j && num[i] === transfrom[j]) {
+              bcount++;
+              ocount--;
+            }
+          }
+        }
+      };
+      const start = () => {
+        console.log("숫자를 입력하세요");
+        GAME_STATE = "started";
+      };
+
+      const finish = () => {
+        console.log("게임이 끝났습니다.");
+        GAME_STATE = "initial";
+        num = [];
+        startBtn.style.visibility = "visible";
+        put.value = "";
+        po.innerHTML = "";
+        h1.innerHTML = MESSAGE.beforeMessage;
+      };
+
+      const numberHandlar = (transfrom) => {
+        if (GAME_STATE === "initial") {
+          console.log("게임을 먼저 시작해주세요");
+          return;
+        }
+        randum();
+        //console.log(putValue);
+        match(transfrom);
+        const newEl = document.createElement("H3");
+        newEl.innerHTML = stcount + "s-" + bcount + "b-" + ocount + "o";
+        po.appendChild(newEl);
+
+        console.log(num);
+
+        if (stcount === 3) {
+          finish();
+        }
+
+        stcount = 0;
+        bcount = 0;
+        ocount = 3;
+      };
+
+      /* const errorhandler = (put) => {
+        console.log(put);
+        return;
+      }; */
+
+      const startscript = () => {
+        putValue = put.value;
+
+        if (!Number(putValue)) {
+          alert("숫자만 입력하세요!");
+          return;
+        }
+
+        const transfrom = putValue.split("");
+        for (let i = 0; i < 3; i++) {
+          transfrom[i] = Number(transfrom[i]);
+        }
+        console.log(transfrom);
+        numberHandlar(transfrom);
+
+        putValue[0];
+      };
+      /* rl.on("line", (line) => {
+        console.log(`status 는 ${status} 입니다. number 는 ${num} 입니다.`);
+        let type;
+        if (line[0] === "0") {
+          type = "number";
+        }
+        const sum = Number(line) + Number(line);
+        if (!sum) {
+          type = "string";
+        }
+
+        if (type === "string" && status === "not-started") {
+          start();
+        } else {
+          const transfrom = line.toString().split("");
+          for (let i = 0; i < 3; i++) {
+            transfrom[i] = Number(transfrom[i]);
+          }
+          numberHandlar(transfrom);
+        }
+
+        line[0];
+      });*/
+      message.addEventListener("click", startscript);
+      startBtn.addEventListener("click", state);
+    </script>
+  </body>
+</html>
